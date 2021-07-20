@@ -43,12 +43,6 @@ if(getCoreConfig('blog/calificaciones/enabled') == 1):
     "url" => $MyRequest->url(ADMIN_CALIFICACIONES_BLOG),
     "etiqueta" => "Calificaciones y comentarios"
   );
-
-  $menuadminblog[0]['children'][] = array(
-    "permiso" =>   ADMINISTRAR_BLOG_MIS_CALIFICACIONES,
-    "url" => $MyRequest->url(ADMIN_MIS_CALIFICACIONES_BLOG),
-    "etiqueta" => "Mis Calificaciones y comentarios"
-  );
 endif;
 
 return $menuadminblog;

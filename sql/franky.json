@@ -127,13 +127,13 @@
             "modulo":"blog"
         },
         {
-            "php":"admin/calificaciones/milista.php",
+            "php":"mi-cuenta/calificaciones/milista.php",
             "css":"",
             "js":[],
             "jquery":[],
             "permisos":[1,2,3,4],
             "constante":"ADMIN_MIS_CALIFICACIONES_BLOG",
-            "url":"admin/articulos-mis-calificaciones/",
+            "url":"mi-cuenta/articulos-mis-calificaciones/",
             "nombre":"Mis calificaciones y comentarios",
             "ajax":["base/ajax.admin.js"],
             "status":1,
