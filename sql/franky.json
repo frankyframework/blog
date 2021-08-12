@@ -17,7 +17,7 @@
         {
             "php":"admin/blog/categorias/form.php",
             "css":"",
-            "js":["validaciones.js"],
+            "js":[],
             "jquery":["jquery-validate","guillotine"],
             "permisos":[1,2],
             "constante":"ADMIN_FRM_CATEGORIAS_BLOG",
@@ -45,7 +45,7 @@
         {
             "php":"admin/blog/articulos/form.php",
             "css":"",
-            "js":["validaciones.js"],
+            "js":[],
             "jquery":["jquery-validate","tags","guillotine"],
             "permisos":[1,2],
             "constante":"ADMIN_FRM_ARTICULOS_BLOG",
