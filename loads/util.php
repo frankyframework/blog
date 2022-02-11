@@ -104,6 +104,7 @@ function getMenuArticulosBlog($cat = "")
     {
         $MyBlog->setLang($_SESSION['lang'] );
     }
+    $MyBlog->isVisibleInSearch(1);
     $MyBlog->getData('',"","","",1);
     $total = $MyBlog->getTotal();
 
