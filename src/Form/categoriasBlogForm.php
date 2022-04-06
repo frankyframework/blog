@@ -31,7 +31,7 @@ class categoriasBlogForm extends \Franky\Form\Form
 
         $this->add(array(
                 'name' => 'nombre',
-                'label' => 'Nombre:',
+                'label' => _blog('Nombre'),
                 'type'  => 'text',
                 'required'  => true,
                 'atributos' => array(
@@ -50,13 +50,13 @@ class categoriasBlogForm extends \Franky\Form\Form
                 'atributos' => array(
                     'class' => ''
                  ),
-                'options' =>  array("1" => "Esta categoria es visible en busquedas"),
+                'options' =>  array("1" => _blog("Esta categoria es visible en busquedas")),
 
 
             )
         );
         $this->add(array(
-                'label' => 'Restringir acceso a:',
+                'label' => _blog('Restringir acceso a'),
                 'name' => 'permisos[]',
                 'type'  => 'checkbox',
                 'options' => array(
@@ -68,7 +68,7 @@ class categoriasBlogForm extends \Franky\Form\Form
 
         $this->add(array(
             'name' => 'meta_keywords',
-            'label' => 'Keywords:',
+            'label' => _blog('Keywords'),
             'type'  => 'text',
             'required'  => false,
             'atributos' => array(
@@ -84,7 +84,7 @@ class categoriasBlogForm extends \Franky\Form\Form
 
     $this->add(array(
             'name' => 'meta_titulo',
-            'label' => 'Meta titulo:',
+            'label' => _blog('Meta titulo'),
             'type'  => 'text',
             'required'  => true,
             'atributos' => array(
@@ -100,7 +100,7 @@ class categoriasBlogForm extends \Franky\Form\Form
 
     $this->add(array(
             'name' => 'meta_descripcion',
-            'label' => 'Meta descripcion:',
+            'label' => _blog('Meta descripcion'),
             'type'  => 'text',
             'required'  => true,
             'atributos' => array(
@@ -120,7 +120,7 @@ class categoriasBlogForm extends \Franky\Form\Form
                 'type'  => 'submit',
                 'atributos' => array(
                     'class'       => 'btn btn-primary btn-big float_right',
-                    'value' => "Guardar"
+                    'value' => _blog("Guardar")
                  )
 
             )
@@ -133,7 +133,7 @@ class categoriasBlogForm extends \Franky\Form\Form
         $this->add(array(
             'name' => 'lang',
             'type'  => 'select',
-            'label' => 'Idioma',
+            'label' => _blog('Idioma'),
             'require' => true,
             'atributos' => array(
                 'class' => 'required'

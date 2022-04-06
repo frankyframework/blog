@@ -89,14 +89,14 @@ if($MyBlog->getTotal() > 0)
 
 
 
-$title_grid = "Articulos";
+$title_grid = _blog("Articulos");
 $class_grid = "cont_blog";
-$error_grid = "No hay articulos registrados";
+$error_grid = _blog("No hay articulos registrados");
 $deleteFunction = "EliminarArticuloBlog";
 $frm_constante_link = ADMIN_FRM_ARTICULOS_BLOG;
 
 $css_columnas_grid = array("fecha" => "w-xxxx-1" ,"titulo" => "w-xxxx-3" , "categoria_nombre" => "w-xxxx-3","usuario" => "w-xxxx-2" );
-$titulo_columnas_grid = array("fecha" => "Fecha","titulo" => "Titulo", "categoria_nombre" =>  "Categoria","usuario" => "Autor");
+$titulo_columnas_grid = array("fecha" => _blog("Fecha"),"titulo" => _blog("Titulo"), "categoria_nombre" =>  _blog("Categoria"),"usuario" => _blog("Autor"));
 $value_columnas_grid = array("fecha","titulo" , "categoria_nombre" ,"usuario" );
 $permisos_grid = ADMINISTRAR_ARTICULOS_BLOG;
 $MyFiltrosForm = new filtrosForm('paginar');

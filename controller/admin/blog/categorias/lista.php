@@ -57,12 +57,12 @@ if($MyCategoriaBlog->getTotal() > 0)
 
 
 //$MyFrankyMonster->setPHPFile(getVista("admin/template/grid.phtml"));
-$title_grid = "Categorias";
+$title_grid = _blog("Categorias");
 $class_grid = "cont_categorias_blog";
-$error_grid = "No hay categorias registradas";
+$error_grid = _blog("No hay categorias registradas");
 $deleteFunction = "EliminarCategoriaBlog";
 $frm_constante_link = ADMIN_FRM_CATEGORIAS_BLOG;
-$titulo_columnas_grid = array("fecha" => "Fecha","nombre" => "Nombre");
+$titulo_columnas_grid = array("fecha" => _blog("Fecha"),"nombre" => _blog("Nombre"));
 $value_columnas_grid = array("fecha", "nombre" );
 
 $css_columnas_grid = array("fecha" => "w-xxxx-5" ,"nombre" => "w-xxxx-5" );
