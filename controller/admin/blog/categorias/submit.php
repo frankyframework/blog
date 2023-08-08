@@ -33,7 +33,7 @@ if($MyCategoriaBlog->existe($nombre,$id) == REGISTRO_SUCCESS)
     $error = true;
 }
 
-if(!$MyAccessList->MeDasChancePasar(ADMINISTRAR_CATEGORIAS_BLOG))
+if(!$MyAccessList->MeDasChancePasar("administrar_categorias_blog"))
 {
     $MyFlashMessage->setMsg("error",$MyMessageAlert->Message("sin_privilegios"));
     $error = true;

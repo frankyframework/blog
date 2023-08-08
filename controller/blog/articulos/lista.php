@@ -30,7 +30,7 @@ if(empty($amigable_categoria_context))
 }
 
 
-$MyBlog->setNivel($MySession->GetVar('nivel'));
+$MyBlog->setNivel($MySession->GetVar('role'));
 if(getCoreConfig('blog/idioma/multi-idioma') == 1)
 {
     $MyBlog->setLang($_SESSION['lang'] );
@@ -112,7 +112,7 @@ if(!empty($amigable_categoria_context))
         {
             $MyRequest->redirect($MyRequest->Url(LOGIN).'?callback='.urlencode($MyRequest->url(BLOG_CATEGORIA,array("categoria" => $amigable_categoria_context))));
         }
-        if(!empty($permisos) && !in_array($MySession->GetVar('nivel'),$permisos))
+        if(!empty($permisos) && !in_array($MySession->GetVar('role'),$permisos))
         {
             $MyRequest->redirect();
         }   

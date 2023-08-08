@@ -78,7 +78,7 @@ function getMenuCategoriasBlog()
                 if(empty($permisos)):
                 $html .= "<li><a href=\"".$MyRequest->url(BLOG_CATEGORIA,array("categoria" => $registro["amigable_categoria"]))."\">".$registro["nombre"]."</a></li>";
                 else:
-                    if(in_array($MySession->GetVar('nivel'),$permisos))
+                    if(in_array($MySession->GetVar('role'),$permisos))
                     {
                         $html .= "<li><a href=\"".$MyRequest->url(BLOG_CATEGORIA,array("categoria" => $registro["amigable_categoria"]))."\">".$registro["nombre"]."</a></li>";
 

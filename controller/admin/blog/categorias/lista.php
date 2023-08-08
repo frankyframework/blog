@@ -67,7 +67,7 @@ $value_columnas_grid = array("fecha", "nombre" );
 
 $css_columnas_grid = array("fecha" => "w-xxxx-5" ,"nombre" => "w-xxxx-5" );
 
-$permisos_grid = ADMINISTRAR_CATEGORIAS_BLOG;
+$permisos_grid = "administrar_categorias_blog";
 $MyFiltrosForm = new filtrosForm('paginar');
 $MyFiltrosForm->setMobile($Mobile_detect->isMobile());
 

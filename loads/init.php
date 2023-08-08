@@ -1,5 +1,4 @@
 <?php
-include 'lca.php';
 include 'util.php';
 __bindtextdomain("blog", "blog");
 

@@ -58,7 +58,7 @@ if($MyBlog->existe($titulo,$categoria,$id) == REGISTRO_SUCCESS)
 }
 
 
-if(!$MyAccessList->MeDasChancePasar(ADMINISTRAR_ARTICULOS_BLOG))
+if(!$MyAccessList->MeDasChancePasar("administrar_articulo_blog"))
 {
     $MyFlashMessage->setMsg("error",$MyMessageAlert->Message("sin_privilegios"));
     $error = true;

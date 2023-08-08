@@ -16,7 +16,7 @@ if(!empty($id))
 }
 
 $adminForm = new categoriasBlogForm("frmcategoria");
-$adminForm->setOptionsInput("permisos[]", $_Niveles_usuarios);
+$adminForm->setOptionsInput("permisos[]", getRoles());
 if(getCoreConfig('blog/idioma/multi-idioma') == 1)
 {
     $idiomas_disponibles = getCoreConfig('base/theme/langs');

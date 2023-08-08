@@ -1,5 +1,5 @@
 <?php
-$permisos_grid = ADMINISTRAR_BLOG_CALIFICACIONES_PENDIENTES;
+$permisos_grid = "administrar_blog_calificaciones_pendientes";
 $campo_item = "titulo";
 $campo_item_id = "id";
 $tabla = "blog";

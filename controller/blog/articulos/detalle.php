@@ -19,7 +19,7 @@ $personSchema =  new personSchema();
 $amigable_context =  $MyRequest->getUrlParam("articulo");;
 $amigable_categoria_context =  $MyRequest->getUrlParam("categoria");;
 
-$MyBlog->setNivel($MySession->GetVar('nivel'));
+$MyBlog->setNivel($MySession->GetVar('role'));
 if(getCoreConfig('blog/idioma/multi-idioma') == 1)
 {
     $MyBlog->setLang($_SESSION['lang'] );
@@ -142,7 +142,7 @@ if($total > 0)
     {
         $MyRequest->redirect($MyRequest->Url(LOGIN).'?callback='.urlencode($MyRequest->url(BLOG_DETALLE,array("categoria" => $amigable_categoria_context,"articulo" =>$amigable_context))));
     }
-    if(!empty($blog_detalle['permisos']) && !in_array($MySession->GetVar('nivel'),$blog_detalle['permisos']))
+    if(!empty($blog_detalle['permisos']) && !in_array($MySession->GetVar('role'),$blog_detalle['permisos']))
     {
         $MyRequest->redirect();
     }

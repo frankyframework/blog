@@ -20,7 +20,7 @@ if(empty($amigable_categoria_context))
     $MyBlog->isVisibleInSearch(1);
 }
 
-$MyBlog->setNivel($MySession->GetVar('nivel'));
+$MyBlog->setNivel($MySession->GetVar('role'));
 $result	 = $MyBlog->getData( '', $busca_b,$autor_b,$destacado_b,1,$amigable_categoria_context);
 
 if($MyBlog->getTotal() > 0)
@@ -64,7 +64,7 @@ if(!empty($amigable_categoria_context))
     {
         $MyRequest->redirect($MyRequest->Url(LOGIN).'?callback='.urlencode($MyRequest->url(BLOG_CATEGORIA,array("categoria" => $amigable_categoria_context))));
     }
-    if(!empty($permisos) && !in_array($MySession->GetVar('nivel'),$permisos))
+    if(!empty($permisos) && !in_array($MySession->GetVar('role'),$permisos))
     {
         $MyRequest->redirect();
     }

@@ -80,7 +80,7 @@ if(!empty($id))
 $MySession->SetVar('path_img_blog',$path_img_blog);
 $adminForm = new articulosBlogForm("frmarticulosblog");
 $adminForm->setOptionsInput("categoria", makeHTMLCategoriasBlog("sql"));
-$adminForm->setOptionsInput("permisos[]", $_Niveles_usuarios);
+$adminForm->setOptionsInput("permisos[]", getRoles());
 
 if(getCoreConfig('blog/idioma/multi-idioma') == 1)
 {

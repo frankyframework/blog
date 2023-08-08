@@ -21,7 +21,7 @@ if (defined('BLOG_CATEGORIA')) {
         {
             continue;
         }
-        if(!empty($permisos) && !in_array($MySession->GetVar('nivel'),$permisos))
+        if(!empty($permisos) && !in_array($MySession->GetVar('role'),$permisos))
         {
             continue;
         }
@@ -34,7 +34,7 @@ if (defined('BLOG_CATEGORIA')) {
 $MyBlog->setPage(1);
 $MyBlog->setTampag(10000);
 $MyBlog->setOrdensql("blog.fecha DESC");
-$MyBlog->setNivel($MySession->GetVar('nivel'));
+$MyBlog->setNivel($MySession->GetVar('role'));
 
 $result	 = $MyBlog->getData( '', '','','',1,'');
 

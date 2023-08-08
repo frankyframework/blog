@@ -5,7 +5,7 @@ function EliminarCategoriaBlog($id,$status)
 	$MyCategoriaBlog = new Blog\model\categoriasBlog();
         global $MyAccessList;
         global $MyMessageAlert;
-         if($MyAccessList->MeDasChancePasar(ADMINISTRAR_CATEGORIAS_BLOG))
+         if($MyAccessList->MeDasChancePasar("administrar_categorias_blog"))
         {
             if($MyCategoriaBlog->delete(addslashes($id),addslashes($status)) == REGISTRO_SUCCESS)
             {
@@ -31,7 +31,7 @@ function EliminarArticuloBlog($id,$status)
 				$MyBlog = new Blog\model\Blog();
         global $MyAccessList;
         global $MyMessageAlert;
-         if($MyAccessList->MeDasChancePasar(ADMINISTRAR_ARTICULOS_BLOG))
+         if($MyAccessList->MeDasChancePasar("administrar_articulo_blog"))
         {
             if($MyBlog->delete(addslashes($Tokenizer->decode($id)),addslashes($status)) == REGISTRO_SUCCESS)
             {
@@ -58,7 +58,7 @@ function descartarBorradorBlog($id,$status)
 				$BorradorblogEntity = new \Blog\entity\BorradorblogEntity();
         global $MyAccessList;
         global $MyMessageAlert;
-         if($MyAccessList->MeDasChancePasar(ADMINISTRAR_ARTICULOS_BLOG))
+         if($MyAccessList->MeDasChancePasar("administrar_articulo_blog"))
         {
 						$BorradorblogEntity->id_blog($id);
 

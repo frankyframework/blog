@@ -98,7 +98,7 @@ $frm_constante_link = ADMIN_FRM_ARTICULOS_BLOG;
 $css_columnas_grid = array("fecha" => "w-xxxx-1" ,"titulo" => "w-xxxx-3" , "categoria_nombre" => "w-xxxx-3","usuario" => "w-xxxx-2" );
 $titulo_columnas_grid = array("fecha" => _blog("Fecha"),"titulo" => _blog("Titulo"), "categoria_nombre" =>  _blog("Categoria"),"usuario" => _blog("Autor"));
 $value_columnas_grid = array("fecha","titulo" , "categoria_nombre" ,"usuario" );
-$permisos_grid = ADMINISTRAR_ARTICULOS_BLOG;
+$permisos_grid = "administrar_articulo_blog";
 $MyFiltrosForm = new filtrosForm('paginar');
 $MyFiltrosForm->setMobile($Mobile_detect->isMobile());
 
