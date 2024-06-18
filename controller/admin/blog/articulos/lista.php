@@ -76,7 +76,7 @@ if($MyBlog->getTotal() > 0)
                     "callback" => $Tokenizer->token('anuncios',$MyRequest->getURI()),
                     "titulo" => '<a href="'.$MyRequest->url(BLOG_DETALLE,array("categoria" => $registro["amigable_categoria"],"articulo" => $registro["friendly"])).'" target="_blank">'.$registro['titulo'].'</a>',
                     "categoria_nombre" => $registro['categoria_nombre'],
-                    "usuario" => $registro['usuario']
+                    "nombre_user" => $registro['nombre_user']
                 );
                 
                 
@@ -95,9 +95,9 @@ $error_grid = _blog("No hay articulos registrados");
 $deleteFunction = "EliminarArticuloBlog";
 $frm_constante_link = ADMIN_FRM_ARTICULOS_BLOG;
 
-$css_columnas_grid = array("fecha" => "w-xxxx-1" ,"titulo" => "w-xxxx-3" , "categoria_nombre" => "w-xxxx-3","usuario" => "w-xxxx-2" );
-$titulo_columnas_grid = array("fecha" => _blog("Fecha"),"titulo" => _blog("Titulo"), "categoria_nombre" =>  _blog("Categoria"),"usuario" => _blog("Autor"));
-$value_columnas_grid = array("fecha","titulo" , "categoria_nombre" ,"usuario" );
+$css_columnas_grid = array("fecha" => "w-xxxx-1" ,"titulo" => "w-xxxx-3" , "categoria_nombre" => "w-xxxx-3","nombre_user" => "w-xxxx-2" );
+$titulo_columnas_grid = array("fecha" => _blog("Fecha"),"titulo" => _blog("Titulo"), "categoria_nombre" =>  _blog("Categoria"),"nombre_user" => _blog("Autor"));
+$value_columnas_grid = array("fecha","titulo" , "categoria_nombre" ,"nombre_user" );
 $permisos_grid = "administrar_articulo_blog";
 $MyFiltrosForm = new filtrosForm('paginar');
 $MyFiltrosForm->setMobile($Mobile_detect->isMobile());

@@ -35,7 +35,7 @@ if($MyBlog->getTotal() > 0)
             "categoria"		=> $registro["categoria_nombre"],
             "contenido"		=>  previewBlog($registro["contenido"]),
             "articulo"		=>  $registro["contenido"],
-            "autor"		=> $registro["usuario"],
+            "autor"		=> $registro["nombre_user"],
             "status"    	=> $registro["status"],
             "friendly_categoria"=> $registro["amigable_categoria"],
             "friendly"          => $registro["friendly"],
