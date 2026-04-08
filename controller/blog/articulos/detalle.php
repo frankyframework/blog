@@ -49,14 +49,15 @@ if($total > 0)
 					endif;
 
 
+                   
 
         $blog_detalle = array(
         "id"                => $registro["id"],
         "titulo"            => $registro["titulo"],
         "autor"             => $registro["nombre_user"],
-        "autortext"             => $registro["autortext"],
-        "id_user"             => $registro["id_user"],
-        "contenido"         => $registro["contenido"],
+        "autortext"         => $registro["autortext"],
+        "id_user"           => $registro["id_user"],
+        "contenido"         => contentWebP($registro["contenido"]),
         "destacado"         => $registro["destacado"],
         "permitircomentarios"       => $registro["comentarios"],
         "fecha"             => getFechaUI($registro["fecha"]),
