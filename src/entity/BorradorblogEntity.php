@@ -19,7 +19,7 @@ class BorradorblogEntity
 
     public function exchangeArray($data)
     {
-        $this->id = (isset($data["id"]) ? $data["id"] : null);
+        $this->id = (isset($data["id"]) && !empty($data["id"]) ? $data["id"] : null);
         $this->data = (isset($data["data"]) ? $data["data"] : null);
         $this->fecha = (isset($data["fecha"]) ? $data["fecha"] : null);
         $this->id_blog = (isset($data["id_blog"]) ? $data["id_blog"] : null);
