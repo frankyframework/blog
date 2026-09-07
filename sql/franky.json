@@ -99,7 +99,7 @@
             "modulo":"blog"
         },
         {
-            "php":"admin/calificaciones/aprovar.php",
+            "php":"admin/calificaciones/aprobar.php",
             "css":"",
             "js":[],
             "jquery":[],

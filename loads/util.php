@@ -55,15 +55,17 @@ function getMenuCategoriasBlog()
     global $MySession;
     global $MyRequest;
     $MyCategoriaBlog = new Blog\model\categoriasBlog();
+    $CategoriablogEntity = new Blog\entity\CategoriablogEntity();
     $MyCategoriaBlog->setOrdensql("nombre ASC");
     $MyCategoriaBlog->setTampag(1000);
 
     if(getCoreConfig('blog/idioma/multi-idioma') == 1)
     {
-        $MyCategoriaBlog->setLang($_SESSION['lang'] );
+        $CategoriablogEntity->lang($_SESSION['lang'] );
     }
+    $CategoriablogEntity->status(1);
 
-    $MyCategoriaBlog->getData('',1);
+    $MyCategoriaBlog->getData($CategoriablogEntity->getArrayCopy());
     $total = $MyCategoriaBlog->getTotal();
 
     $html = "";
@@ -98,35 +100,30 @@ function getMenuArticulosBlog($cat = "")
     global $MyRequest;
 
     $MyBlog = new Blog\model\Blog();
+    $BlogEntity = new Blog\entity\BlogEntity();
     $MyBlog->setOrdensql("titulo ASC");
     $MyBlog->setTampag(10);
     if(getCoreConfig('blog/idioma/multi-idioma') == 1)
     {
-        $MyBlog->setLang($_SESSION['lang'] );
+        $BlogEntity->lang($_SESSION['lang'] );
     }
-    $MyBlog->isVisibleInSearch(1);
-    $MyBlog->getData('',"","","",1);
+    $BlogEntity->visible_in_search(1);
+    $BlogEntity->status(1);
+    $MyBlog->getData($BlogEntity->getArrayCopy());
     $total = $MyBlog->getTotal();
 
     $html = "";
     $html = "<ul>";
     if($total > 0)
     {
-
-
-            while($registro = $MyBlog->getRows())
-            {
-
-                $html .= '<li>
-
-
-                                <a href="'.$MyRequest->url(BLOG_DETALLE,array("categoria" => $registro["amigable_categoria"],"articulo" => $registro["friendly"])).'">
-                                    '.$registro["titulo"].'
-                                </a>
-
-                        </li>';
-
-            }
+        while($registro = $MyBlog->getRows())
+        {
+            $html .= '<li>
+                            <a href="'.$MyRequest->url(BLOG_DETALLE,array("categoria" => $registro["amigable_categoria"],"articulo" => $registro["friendly"])).'">
+                                '.$registro["titulo"].'
+                            </a>
+                    </li>';
+        }
     }
     $html .= "</ul>";
 
@@ -186,11 +183,12 @@ function prevArticuloBlog($id){
     global $MyConfigure;
   $MyBlog = new \Blog\model\Blog();
   $blog_detalle = array();
+  $lang = "";
   if(getCoreConfig('blog/idioma/multi-idioma') == 1)
     {
-        $MyBlog->setLang($_SESSION['lang'] );
+        $lang = $_SESSION['lang'];
     }
-  if($MyBlog->getData($id, "","","",1,"","",1)== REGISTRO_SUCCESS)
+  if($MyBlog->getPrevData($id, $lang)== REGISTRO_SUCCESS)
   {
       $registro = $MyBlog->getRows();
 
@@ -208,11 +206,12 @@ function nextArticuloBlog($id){
     global $MyRequest;
   $MyBlog = new \Blog\model\Blog();
   $blog_detalle = array();
+  $lang = "";
   if(getCoreConfig('blog/idioma/multi-idioma') == 1)
-    {
-        $MyBlog->setLang($_SESSION['lang'] );
-    }
-  if($MyBlog->getData($id, "","","",1,"",1)== REGISTRO_SUCCESS)
+{
+    $lang = $_SESSION['lang'];
+}
+  if($MyBlog->getNextData($id,$lang)== REGISTRO_SUCCESS)
   {
       $registro = $MyBlog->getRows();
       $blog_detalle = array(

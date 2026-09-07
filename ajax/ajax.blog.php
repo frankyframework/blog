@@ -1,26 +1,27 @@
 <?php
-function EliminarCategoriaBlog($id,$status)
+function EliminarCategoriaBlog(int $id, int $status)
 {
-
+     $respuesta = null;
 	$MyCategoriaBlog = new Blog\model\categoriasBlog();
-        global $MyAccessList;
-        global $MyMessageAlert;
-         if($MyAccessList->MeDasChancePasar("administrar_categorias_blog"))
-        {
-            if($MyCategoriaBlog->delete(addslashes($id),addslashes($status)) == REGISTRO_SUCCESS)
-            {
+     global $MyAccessList;
+     global $MyMessageAlert;
+     if($MyAccessList->MeDasChancePasar("administrar_categorias_blog"))
+     {
+
+          if($MyCategoriaBlog->setStatus(addslashes($id), addslashes($status)) == REGISTRO_SUCCESS)
+          {
 
 
-            }
-            else
-            {
-		  $respuesta[] = array("message" => $MyMessageAlert->Message(($status == 1 ? "activar" : "eliminar")."_generico_error"));
-            }
-        }
-        else
-        {
-             $respuesta[] = array("message" => $MyMessageAlert->Message("sin_privilegios"));
-        }
+          }
+          else
+          {
+          $respuesta[] = array("message" => $MyMessageAlert->Message(($status == 1 ? "activar" : "eliminar")."_generico_error"));
+          }
+     }
+     else
+     {
+          $respuesta[] = array("message" => $MyMessageAlert->Message("sin_privilegios"));
+     }
 
 	return $respuesta;
 }
@@ -54,13 +55,15 @@ function EliminarArticuloBlog($id,$status)
 function descartarBorradorBlog($id,$status)
 {
 
-				$BorradorblogModel = new \Blog\model\BorradorblogModel();
-				$BorradorblogEntity = new \Blog\entity\BorradorblogEntity();
-        global $MyAccessList;
-        global $MyMessageAlert;
-         if($MyAccessList->MeDasChancePasar("administrar_articulo_blog"))
-        {
-						$BorradorblogEntity->id_blog($id);
+     $BorradorblogModel = new \Blog\model\BorradorblogModel();
+     $BorradorblogEntity = new \Blog\entity\BorradorblogEntity();
+     $Tokenizer = new Franky\Haxor\Tokenizer();
+     global $MyAccessList;
+     global $MyMessageAlert;
+     if($MyAccessList->MeDasChancePasar("administrar_articulo_blog"))
+     {
+          $id = $Tokenizer->decode($id);
+			$BorradorblogEntity->id_blog($id);
 
             if($BorradorblogModel->eliminar($BorradorblogEntity->getArrayCopy()) == REGISTRO_SUCCESS)
             {

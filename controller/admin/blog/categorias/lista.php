@@ -1,93 +1,78 @@
 <?php
-use Base\Form\filtrosForm;
+use Blog\entity\CategoriablogEntity;
 use Blog\model\categoriasBlog;
-use Franky\Core\paginacion;
-$MyPaginacion = new paginacion();
-
-$MyPaginacion->setPage($MyRequest->getRequest('page',1));
-$MyPaginacion->setCampoOrden($MyRequest->getRequest('por',"fecha"));
-$MyPaginacion->setOrden($MyRequest->getRequest('order',"ASC"));
-$MyPaginacion->setTampageDefault($MyRequest->getRequest('tampag',25));		
-$busca_b	= $MyRequest->getRequest('busca_b');	
-
-$MyCategoriaBlog = new categoriasBlog();
+use Franky\Haxor\Tokenizer;
 
 
-if(getCoreConfig('blog/idioma/multi-idioma') == 1)
-{
-    $lang_b	= $MyRequest->getRequest('lang_b',$_SESSION['lang'] );
-    $idiomas_disponibles = getCoreConfig('base/theme/langs');
-    $MyCategoriaBlog->setLang($lang_b);
-
-}
-
-
-
-
-$MyCategoriaBlog->setPage($MyPaginacion->getPage());
-$MyCategoriaBlog->setTampag($MyPaginacion->getTampageDefault());
-$MyCategoriaBlog->setOrdensql($MyPaginacion->getCampoOrden()." ".$MyPaginacion->getOrden());
-
-$status_b = "";
-if(getCoreConfig('blog/registers/showdelete') == 0){
-        $status_b = 1;
-}
-
-$result	 = $MyCategoriaBlog->getData('',$status_b,$busca_b);
-$MyPaginacion->setTotal($MyCategoriaBlog->getTotal());
-
-$lista_admin_data = array();
-if($MyCategoriaBlog->getTotal() > 0)
-{
-	$iRow = 0;	
-
-	while($registro = $MyCategoriaBlog->getRows())
-	{
-		$thisClass  = ((($iRow % 2) == 0) ? "formFieldDk" : "formFieldLt");
-	
-		$lista_admin_data[] = array_merge($registro,array(
-                "fecha" 	=> getFechaUI($registro["fecha"]),
-                "thisClass"     => $thisClass,
-                "nuevo_estado"  => ($registro["status"] == 1 ?"desactivar" : "activar"),
-                ));
-                $iRow++;
-        }
-}
-
-
-
-//$MyFrankyMonster->setPHPFile(getVista("admin/template/grid.phtml"));
-$title_grid = _blog("Categorias");
-$class_grid = "cont_categorias_blog";
-$error_grid = _blog("No hay categorias registradas");
-$deleteFunction = "EliminarCategoriaBlog";
-$frm_constante_link = ADMIN_FRM_CATEGORIAS_BLOG;
-$titulo_columnas_grid = array("fecha" => _blog("Fecha"),"nombre" => _blog("Nombre"));
-$value_columnas_grid = array("fecha", "nombre" );
-
-$css_columnas_grid = array("fecha" => "w-xxxx-5" ,"nombre" => "w-xxxx-5" );
-
-$permisos_grid = "administrar_categorias_blog";
-$MyFiltrosForm = new filtrosForm('paginar');
-$MyFiltrosForm->setMobile($Mobile_detect->isMobile());
-
-
-if(getCoreConfig('blog/idioma/multi-idioma') == 1)
-{
-    $idiomas = array();
-    foreach($idiomas_disponibles as $idioma)
-    {
-        $idiomas[$idioma] = $idioma;
+if ($MyRequest->isAjax()) {
+    $callback	= $MyRequest->getRequest('callback');
+    $filters = $MyRequest->getRequest('filters');
+    $dataPost = json_decode(stripslashes($filters),true);
+    $dataPost = $dataPost['rules'];
+    $requestFranky = [];
+    $request = [];
+    foreach($dataPost as $data) {
+      
+      $request[$data['field']] = $MyRequest->Sanitizacion($data['data']);
+      
     }
-    $MyFiltrosForm->addLang();
-    $MyFiltrosForm->setOptionsInput("lang_b", $idiomas);
-    $MyFiltrosForm->setAtributoInput("lang_b","value",$lang_b);
+  
+  
+    $Tokenizer = new Tokenizer();
+    $sortInput  = (!empty($MyRequest->getRequest('sidx',"fecha")) ? : "fecha");
+   
+  
+   
+    if(getCoreConfig('blog/idioma/multi-idioma') == 1)
+    {
+        $lang_b	= $MyRequest->getRequest('lang_b',$_SESSION['lang'] );
+        $idiomas_disponibles = getCoreConfig('base/theme/langs');
+        $request['lang'] = $lang_b;
 
+    }
+
+    $MyCategoriaBlog = new categoriasBlog();
+    $CategoriablogEntity = new CategoriablogEntity($request);
+
+
+    $MyCategoriaBlog->setPage($MyRequest->getRequest('page',1));
+    $MyCategoriaBlog->setTampag($MyRequest->getRequest('rows',12));
+    $MyCategoriaBlog->setOrdensql($sortInput." ".$MyRequest->getRequest('sord',"ASC"));
+
+
+    if(getCoreConfig('blog/registers/showdelete') == 0){
+        $CategoriablogEntity->status(1);
+    }
+
+    $result	 = $MyCategoriaBlog->getData($CategoriablogEntity->getArrayCopy());
+    $dataRows = ["rows" => [], "total" => ceil($MyCategoriaBlog->getTotal() / $MyRequest->getRequest('rows',12)), "page" => (int)$MyRequest->getRequest('page',1),"records" => $MyCategoriaBlog->getTotal()];
+
+    if($MyCategoriaBlog->getTotal() > 0)
+    {
+
+        while($registro = $MyCategoriaBlog->getRows())
+        {
+            $registro = array_filter($registro, function($llave) {
+                    return !is_numeric($llave);
+            }, ARRAY_FILTER_USE_KEY);
+    
+    
+            $dataRows['rows'][] = array_merge($registro,array(
+                    "fecha" 	=> getFechaUI($registro["fecha"]),
+                    "status"  => ($registro["status"] == 1 ?"desactivar" : "activar"),
+                    "callback" => $Tokenizer->token('categories_blog',$MyRequest->getURI()),
+                    ));
+                    $iRow++;
+            }
+    }
+    header('Content-Type: application/json; charset=utf-8');
+    echo $callback . '(' . json_encode($dataRows). ');';
+    die;
+} else {
+    $MyMetatag->setJs("/public/plugins/jqGrid/js/jquery.jqGrid.js");
+    $MyMetatag->setJs("/public/plugins/jqGrid/js/i18n/grid.locale-$lang_root.js");
+    $MyMetatag->setCSS("/public/plugins/jqGrid/css/ui.jqgrid.css");
+  
 }
 
-
-$MyFiltrosForm->addBusca();
-$MyFiltrosForm->addSubmit();
-
-$MyFiltrosForm->setAtributoInput("busca_b", "value",$busca_b);
 ?>

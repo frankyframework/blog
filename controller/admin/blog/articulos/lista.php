@@ -1,124 +1,105 @@
 <?php
-use Base\Form\filtrosForm;
 use Blog\model\Blog;
+use Blog\entity\BlogEntity;
+use Blog\entity\CategoriablogEntity;
 use Blog\model\BorradorblogModel;
 use Blog\entity\BorradorblogEntity;
-use Franky\Core\paginacion;
 use Franky\Haxor\Tokenizer;
+use Base\entity\users as UserEntity;
 
-$Tokenizer = new Tokenizer();
-$MyPaginacion = new paginacion();
-$MyBlog = new Blog();
-
-$BorradorblogModel = new BorradorblogModel();
-$BorradorblogEntity = new BorradorblogEntity();
-
-
-$BorradorblogModel->setPage(1);
-$BorradorblogModel->setTampag(10000);
-$borrador = [];
-if($BorradorblogModel->getData($BorradorblogEntity->getArrayCopy()) == REGISTRO_SUCCESS)
-{
-    while($registro = $BorradorblogModel->getRows()){
-        $borrador[] = $registro['id_blog'];
-    }  
-}
-
-
-$MyPaginacion->setPage($MyRequest->getRequest('page',1));
-$MyPaginacion->setCampoOrden($MyRequest->getRequest('por',"blog.fecha"));
-$MyPaginacion->setOrden($MyRequest->getRequest('order',"DESC"));
-$MyPaginacion->setTampageDefault($MyRequest->getRequest('tampag',25));
-$busca_b = $MyRequest->getRequest('busca_b');
-$autor_b = $MyRequest->getRequest('autor_b');
-$destacado_b = $MyRequest->getRequest('destacado_b');
-$status_b = $MyRequest->getRequest('status_b');
-$categoria_b = $MyRequest->getRequest('categoria_b');
-
-if(getCoreConfig('blog/idioma/multi-idioma') == 1)
-{
-    $lang_b	= $MyRequest->getRequest('lang_b',$_SESSION['lang'] );
-    $idiomas_disponibles = getCoreConfig('base/theme/langs');
-    $MyBlog->setLang($lang_b);
-
-}
-
-if(getCoreConfig('blog/registers/showdelete') == 0){
-    $status_b = 1;
-}
-
-$MyBlog->setPage($MyPaginacion->getPage());
-$MyBlog->setTampag($MyPaginacion->getTampageDefault());
-$MyBlog->setOrdensql($MyPaginacion->getCampoOrden()." ".$MyPaginacion->getOrden());
-
-$MyBlog->setIsAdmin(1);
-$result	 = $MyBlog->getData('', $busca_b,$autor_b,$destacado_b,$status_b,$categoria_b);
-$MyPaginacion->setTotal($MyBlog->getTotal());
-
-
-$lista_admin_data = array();
-if($MyBlog->getTotal() > 0)
-{	
-	$iRow = 0;	
-
-	while($registro = $MyBlog->getRows())
-	{
-		$thisClass  = ((($iRow % 2) == 0) ? "formFieldDk" : "formFieldLt");
-		   
-                
-		$lista_admin_data[$iRow] = array(
-                    "id" => $Tokenizer->token('articulo_blog',$registro["id"]),
-                    "fecha"             => getFechaUI($registro["fecha"]),
-                    "link"              => $MyRequest->url(BLOG_DETALLE,array("categoria" => $registro["amigable_categoria"],"articulo" => $registro["friendly"])),
-                    "thisClass"     => $thisClass,
-                    "nuevo_estado"  =>($registro["status"] == 1 ?  "desactivar" : "activar"),
-                    "borrador" =>'',
-                    "callback" => $Tokenizer->token('anuncios',$MyRequest->getURI()),
-                    "titulo" => '<a href="'.$MyRequest->url(BLOG_DETALLE,array("categoria" => $registro["amigable_categoria"],"articulo" => $registro["friendly"])).'" target="_blank">'.$registro['titulo'].'</a>',
-                    "categoria_nombre" => $registro['categoria_nombre'],
-                    "nombre_user" => $registro['nombre_user']
-                );
-                
-                
-                if(in_array($registro['id'],$borrador)){
-                    $lista_admin_data[$iRow]['borrador'] = '<a class="btn_adm_borrador"  href="'. $MyRequest->link(ADMIN_FRM_ARTICULOS_BLOG)."?id=".$lista_admin_data[$iRow]['id']."&amp;callback=".$lista_admin_data[$iRow]['callback'].'&borrador=1"><i class="icon icon-borrar"> </i></a>';
-                }
-                $iRow++;
-        }
-}
-
-
-
-$title_grid = _blog("Articulos");
-$class_grid = "cont_blog";
-$error_grid = _blog("No hay articulos registrados");
-$deleteFunction = "EliminarArticuloBlog";
-$frm_constante_link = ADMIN_FRM_ARTICULOS_BLOG;
-
-$css_columnas_grid = array("fecha" => "w-xxxx-1" ,"titulo" => "w-xxxx-3" , "categoria_nombre" => "w-xxxx-3","nombre_user" => "w-xxxx-2" );
-$titulo_columnas_grid = array("fecha" => _blog("Fecha"),"titulo" => _blog("Titulo"), "categoria_nombre" =>  _blog("Categoria"),"nombre_user" => _blog("Autor"));
-$value_columnas_grid = array("fecha","titulo" , "categoria_nombre" ,"nombre_user" );
-$permisos_grid = "administrar_articulo_blog";
-$MyFiltrosForm = new filtrosForm('paginar');
-$MyFiltrosForm->setMobile($Mobile_detect->isMobile());
-
-
-$MyFiltrosForm->setAtributoInput("busca_b", "value",$busca_b);
-
-
-if(getCoreConfig('blog/idioma/multi-idioma') == 1)
-{
-    $idiomas = array();
-    foreach($idiomas_disponibles as $idioma)
-    {
-        $idiomas[$idioma] = $idioma;
+if ($MyRequest->isAjax()) {
+    $callback	= $MyRequest->getRequest('callback');
+    $filters = $MyRequest->getRequest('filters');
+    $dataPost = json_decode(stripslashes($filters),true);
+    $dataPost = $dataPost['rules'];
+    $requestFranky = [];
+    $request = [];
+    foreach($dataPost as $data) {
+      
+      $request[$data['field']] = $MyRequest->Sanitizacion($data['data']);
+      
     }
-    $MyFiltrosForm->addLang();
-    $MyFiltrosForm->setOptionsInput("lang_b", $idiomas);
-    $MyFiltrosForm->setAtributoInput("lang_b","value",$lang_b);
+  
+    $Tokenizer = new Tokenizer();
+    $MyBlog = new Blog();
+    $BlogEntity = new BlogEntity();
+    $BorradorblogModel = new BorradorblogModel();
+    $BorradorblogEntity = new BorradorblogEntity();
+    $CategoriablogEntity = new CategoriablogEntity();
+    $UserEntity = new UserEntity();
+    $sortInput  = (!empty($MyRequest->getRequest('sidx',"blog.fecha")) ? : "blog.fecha");
 
+
+    $BorradorblogModel->setPage(1);
+    $BorradorblogModel->setTampag(10000);
+    $borrador = [];
+    if($BorradorblogModel->getData($BorradorblogEntity->getArrayCopy()) == REGISTRO_SUCCESS)
+    {
+        while($registro = $BorradorblogModel->getRows()){
+            $borrador[] = $registro['id_blog'];
+        }  
+    }
+
+
+    if(getCoreConfig('blog/idioma/multi-idioma') == 1)
+    {
+        $lang_b	= $MyRequest->getRequest('lang_b',$_SESSION['lang'] );
+        $idiomas_disponibles = getCoreConfig('base/theme/langs');
+        $BlogEntity->lang($lang_b);
+
+    }
+
+    if(getCoreConfig('blog/registers/showdelete') == 0){
+        $BlogEntity->status(1);
+    }
+    $UserEntity->setNombre($request['nombre_user']);
+    $BlogEntity->titulo($request['titulo']);
+    $BlogEntity->friendly($request['friendly']);
+    $BlogEntity->lang($request['lang']);
+    $BlogEntity->fecha($request['fecha']);
+    $CategoriablogEntity->nombre($request['categoria_nombre']);
+
+    $MyBlog->setPage($MyRequest->getRequest('page',1));
+    $MyBlog->setTampag($MyRequest->getRequest('rows',12));
+    $MyBlog->setOrdensql($sortInput." ".$MyRequest->getRequest('sord',"ASC"));
+
+    $MyBlog->setIsAdmin(1);
+    $result	 = $MyBlog->getData($BlogEntity->getArrayCopy(),$CategoriablogEntity->getArrayCopy(),$UserEntity->getArrayCopy());
+    $dataRows = ["rows" => [], "total" => ceil($MyBlog->getTotal() / $MyRequest->getRequest('rows',12)), "page" => (int)$MyRequest->getRequest('page',1),"records" => $MyBlog->getTotal()];
+
+    if($MyBlog->getTotal() > 0)
+    {	
+        
+        while($registro = $MyBlog->getRows())
+        {
+            $registro = array_filter($registro, function($llave) {
+                    return !is_numeric($llave);
+            }, ARRAY_FILTER_USE_KEY);
+
+
+            $dataRows['rows'][] = array(
+                        "id" => $Tokenizer->token('articulo_blog',$registro["id"]),
+                        "fecha"             => getFechaUI($registro["fecha"]),
+                        "friendly"          => '<a href="'.$MyRequest->url(BLOG_DETALLE,array("categoria" => $registro["amigable_categoria"],"articulo" => $registro["friendly"])).'" target="_blank">'.$registro['titulo'].'</a>',
+                        "nuevo_estado"  =>($registro["status"] == 1 ?  "desactivar" : "activar"),
+                        "borrador" =>in_array($registro['id'],$borrador) ? 1: 0,
+                        "callback" => $Tokenizer->token('anuncios',$MyRequest->getURI()),
+                        "titulo" => $registro['titulo'],
+                        "lang" => $registro['lang'],
+                        "categoria_nombre" => $registro['categoria_nombre'],
+                        "nombre_user" => $registro['nombre_user']
+                    );
+                    
+        }
+    }
+    header('Content-Type: application/json; charset=utf-8');
+    echo $callback . '(' . json_encode($dataRows). ');';
+    die;
+} else {
+    $MyMetatag->setJs("/public/plugins/jqGrid/js/jquery.jqGrid.js");
+    $MyMetatag->setJs("/public/plugins/jqGrid/js/i18n/grid.locale-$lang_root.js");
+    $MyMetatag->setCSS("/public/plugins/jqGrid/css/ui.jqgrid.css");
+  
 }
-$MyFiltrosForm->addBusca();
-$MyFiltrosForm->addSubmit();
 
 ?>

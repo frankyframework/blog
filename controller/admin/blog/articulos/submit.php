@@ -1,5 +1,6 @@
 <?php
 use Blog\model\Blog;
+use Blog\entity\BlogEntity;
 use Franky\Core\validaciones;
 use Base\entity\redireccionesEntity;
 use Blog\model\BorradorblogModel;
@@ -10,30 +11,31 @@ use Franky\Haxor\Tokenizer;
 
 $Tokenizer = new Tokenizer();
 $MyBlog = new Blog();
+$BlogEntity = new BlogEntity($MyRequest->getRequest());
 $BorradorblogModel = new BorradorblogModel();
-$BorradorblogEntity = new BorradorblogEntity();
+$BorradorblogEntity = new BorradorblogEntity($MyRequest->getRequest('id'));
 
-$imagen = "";
-$imagen_portada = "";
 $id                 = $Tokenizer->decode($MyRequest->getRequest('id'));
 $callback           = $Tokenizer->decode($MyRequest->getRequest('callback'));
-$borrador             = $MyRequest->getRequest('borrador');
+$borrador           = $MyRequest->getRequest('borrador');
 $titulo             = $MyRequest->getRequest('titulo');
 $categoria          = $MyRequest->getRequest('categoria');
 $contenido          = $MyRequest->getRequest('contenido',"",true);
 $comentarios        = $MyRequest->getRequest('comentarios',0);
 $keywords           = $MyRequest->getRequest('keywords');
+$permisos           = $MyRequest->getRequest('permisos',[]);
 $destacado          = $MyRequest->getRequest('destacado',0);
-$meta_titulo        = $MyRequest->getRequest('meta_titulo');
-$meta_descripcion   = $MyRequest->getRequest('meta_descripcion');
-
+$BlogEntity->contenido($contenido);
+$BlogEntity->destacado($destacado);
+$BlogEntity->comentarios($comentarios);
+$BlogEntity->id($id);
 $lang   = $MyRequest->getRequest('lang');
 $autortext   = $MyRequest->getRequest('autortext');
 
 $data_img   = json_decode(stripslashes($MyRequest->getRequest('data_img')),true);
 
 $visible_in_search   = $MyRequest->getRequest('visible_in_search',0);
-$permisos   = $MyRequest->getRequest('permisos',array());
+
 $error = false;
 $rules = array(
             "Titulo" => array("valor" => $titulo,"required","length" => array("max" => "255")),
@@ -51,7 +53,7 @@ if(!$valid)
     $error = true;
 }
 
-if($MyBlog->existe($titulo,$categoria,$id) == REGISTRO_SUCCESS)
+if($MyBlog->existe($BlogEntity->titulo(),$BlogEntity->categoria(),$BlogEntity->id()) == REGISTRO_SUCCESS)
 {
     $MyFlashMessage->setMsg("error",$MyMessageAlert->Message("blog_articulo_duplicado"));
     $error = true;
@@ -87,6 +89,7 @@ if ($handle->uploaded)
         if ($handle->processed)
         {
             $imagen = $handle->file_dst_name;
+            $BlogEntity->imagen($imagen);
             $handle->image_rotate          = $data_img['angle'];
             $image_x            = intval(($data_img['x']+$data_img['w'])/$data_img['scale']);
             $image_y            = intval(($data_img['y']+$data_img['h'])/$data_img['scale']);
@@ -95,6 +98,7 @@ if ($handle->uploaded)
 
             $handle->Process($dir_blog);
             $imagen_portada = $handle->file_dst_name;
+            $BlogEntity->imagen_portada($imagen_portada);
         }
         else
         {
@@ -123,21 +127,27 @@ else {
 
 if($error == false)
 {
-
+    $BlogEntity->friendly(getFriendly($BlogEntity->titulo()));
+    $BlogEntity->permisos(json_encode($permisos));
     if(getCoreConfig('blog/idioma/multi-idioma') == 1)
     {
-        $MyBlog->setLang($lang);
+        $BlogEntity->lang($lang);
     }
     if(empty($id))
     {
-        $result = $MyBlog->save($categoria,$titulo,  getFriendly($titulo),$autortext,$contenido,$comentarios,$MySession->GetVar('id'),$keywords,$destacado,$imagen,$imagen_portada,$visible_in_search,json_encode($permisos),$meta_titulo, $meta_descripcion);
+        $BlogEntity->fecha(date('Y-m-d H:i:s'));
+        $BlogEntity->autor($MySession->GetVar('id'));
+        $BlogEntity->status(1);
+        $result = $MyBlog->save($BlogEntity->getArrayCopy());
         if($result == REGISTRO_SUCCESS)
         {
 
             rename($dir_blog,str_replace($MySession->GetVar('path_img_blog'),$MyBlog->getUltimoID(),$dir_blog));
 
             $contenido = str_replace($MySession->GetVar('path_img_blog'),$MyBlog->getUltimoID(),$contenido);
-            $MyBlog->edit($MyBlog->getUltimoID(),$categoria,$titulo,  getFriendly($titulo),$autortext,$contenido,$comentarios,$keywords,$destacado,$imagen,$imagen_portada,$visible_in_search, json_encode($permisos),$meta_titulo, $meta_descripcion);
+            $BlogEntity->id($MyBlog->getUltimoID());
+            $BlogEntity->contenido($contenido);
+            $MyBlog->save($BlogEntity->getArrayCopy());
 
             $MyFlashMessage->setMsg("success",$MyMessageAlert->Message("blog_guardar_articulo_success"));
             $location =  $MyRequest->url(ADMIN_LISTA_ARTICULOS_BLOG);
@@ -151,21 +161,16 @@ if($error == false)
     else
     {
         $MyBlog->setIsAdmin(1);
-         $MyBlog->getData($id);
-         $registro = $MyBlog->getRows();
-         $_titulo		= $registro["titulo"];
-         $_categoria                 = $registro["categoria"];
+        $MyBlog->getData(['id' => $id]);
+        $registro = $MyBlog->getRows();
+        $_titulo		= $registro["titulo"];
+        $_categoria            = $registro["categoria"];
+        $friendly_categoria    = $registro["amigable_categoria"];
+        $friendly              = $registro["friendly"];
 
-
-         $friendly_categoria          = $registro["amigable_categoria"];
-         $friendly              = $registro["friendly"];
-
-
-
-        $result = $MyBlog->edit($id,$categoria,$titulo,  getFriendly($titulo),$autortext,$contenido,$comentarios,$keywords,$destacado,$imagen,$imagen_portada,$visible_in_search, json_encode($permisos),$meta_titulo, $meta_descripcion);
+        $result = $MyBlog->save($BlogEntity->getArrayCopy());
         if($result == REGISTRO_SUCCESS)
         {
-
             if($borrador == 1)
             {
                 $BorradorblogEntity->id_blog($id);
@@ -181,7 +186,7 @@ if($error == false)
 
 
                 $MyBlog->free();
-                $MyBlog->getData($id);
+                $MyBlog->getData(['id' =>$id]);
                 $registro = $MyBlog->getRows();
 
 

@@ -1,21 +1,16 @@
 <?php
 use Franky\Core\validaciones; 
 use Blog\model\categoriasBlog;
+use Blog\entity\CategoriablogEntity;
 $MyCategoriaBlog = new categoriasBlog();
+$CategoriablogEntity = new CategoriablogEntity($MyRequest->getRequest());
 
 $id                 = $MyRequest->getRequest('id');
-$callback           = $MyRequest->getRequest('callback');
-$nombre             = $MyRequest->getRequest('nombre');
-$visible             = $MyRequest->getRequest('visible',0);
-$permisos             = $MyRequest->getRequest('permisos',array());
-$lang                 = $MyRequest->getRequest('lang');
-$meta_keywords        = $MyRequest->getRequest('meta_keywords');
-$meta_titulo          = $MyRequest->getRequest('meta_titulo');
-$meta_descripcion      = $MyRequest->getRequest('meta_descripcion');
+$permisos                 = $MyRequest->getRequest('permisos');
 $error = false;
             
 $rules = array(
-            "Nombre de la categoria" => array("valor" => $nombre,"required","length" => array("max" => "255")),
+            "Nombre de la categoria" => array("valor" => $CategoriablogEntity->nombre(),"required","length" => array("max" => "255")),
             );
         
 
@@ -27,7 +22,7 @@ if(!$valid)
     $error = true;
 }
 
-if($MyCategoriaBlog->existe($nombre,$id) == REGISTRO_SUCCESS)
+if($MyCategoriaBlog->existe($CategoriablogEntity->nombre(),$id) == REGISTRO_SUCCESS)
 {
     $MyFlashMessage->setMsg("error",$MyMessageAlert->Message("blog_categoria_duplicado"));
     $error = true;
@@ -41,13 +36,13 @@ if(!$MyAccessList->MeDasChancePasar("administrar_categorias_blog"))
 
 if($error == false)        
 {
-    if(getCoreConfig('blog/idioma/multi-idioma') == 1)
-    {
-        $MyCategoriaBlog ->setLang($lang);
-    }
+    $CategoriablogEntity->friendly(getFriendly($CategoriablogEntity->nombre()));
+    $CategoriablogEntity->permisos(json_encode($permisos));
     if(empty($id))
     {
-        $result = $MyCategoriaBlog->save($nombre, getFriendly($nombre),'',json_encode($permisos),$visible,$meta_keywords,$meta_titulo,$meta_descripcion);
+        $CategoriablogEntity->fecha(date('Y-m-d H:i:s'));
+        $CategoriablogEntity->status(1);
+        $result = $MyCategoriaBlog->save($CategoriablogEntity->getArrayCopy());
         if($result == REGISTRO_SUCCESS)
         {
             
@@ -66,7 +61,7 @@ if($error == false)
         
          
          
-        $result = $MyCategoriaBlog->edit($id,$nombre, getFriendly($nombre),'',json_encode($permisos),$visible,$meta_keywords,$meta_titulo,$meta_descripcion);
+        $result = $MyCategoriaBlog->save($CategoriablogEntity->getArrayCopy());
         if($result == REGISTRO_SUCCESS)
         {
             $MyFlashMessage->setMsg("success",$MyMessageAlert->Message("editar_generico_success"));

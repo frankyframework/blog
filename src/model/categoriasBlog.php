@@ -3,116 +3,60 @@ namespace Blog\model;
 
 class categoriasBlog  extends \Franky\Database\Mysql\objectOperations
 {
-        var $visible;
         var $lang;
 
         public function __construct()
         {
           parent::__construct();
           $this->from()->addTable('categorias_blog');
-          $this->visible = "";
-
         }
 
-        public function setLang($lang)
+        function getData($data = [])
         {
-          $this->lang = $lang;
-        }
-
-        function getData($id='',$status='',$busca='')
-        {
-            $campos = array("id","categorias_blog.nombre","categorias_blog.friendly as amigable_categoria","fecha",
+            $data = $this->optimizeEntity($data);
+            $campos = array("id","nombre","friendly as amigable_categoria","fecha",
             "status","visible","permisos","imagen","imagen_portada","lang","meta_keywords","meta_titulo","meta_descripcion");
 
-
-            if(!empty($id))
+            foreach($data as $k => $v)
             {
-                if(is_numeric($id))
-                {
-                    $this->where()->addAnd('categorias_blog.id',$id,'=');
+              if(!empty($v))
+              {
+                  if(is_array($v))
+                  {
+                      $this->where()->concat('AND (');
+                      foreach ($v as $_v)
+                      {
+                          $this->where()->addOr($k,$_v,'=');
 
-                }
-                else
-                {
-                    $this->where()->addAnd('categorias_blog.friendly',$id,'=');
-                }
-
-            }
-            if(!empty($busca))
-            {
-                $this->where()->addAnd('categorias_blog.nombre',"%$busca%",'like');
-            }
-
-            if($status != "")
-            {
-                $this->where()->addAnd('categorias_blog.status',$status,'=');
-            }
-
-            if($this->visible !== "")
-            {
-                $this->where()->addAnd('visible',$this->visible,'=');
-            }
-
-            if(!empty($this->lang))
-            {
-              $this->where()->addAnd("categorias_blog.lang",$this->lang,'=');
-            }
-
-
+                      }
+                      $this->where()->concat(')');
+                  }
+                  else
+                  {
+                      if(in_array($k,['id','friendly','fecha'])) {
+                          $this->where()->addAnd($k,$v,'=');
+                      } else {
+                          $this->where()->addAnd($k,"%".$v."%",'like');
+                      }
+                  } 
+              }
+          }
             return $this->getColeccion($campos);
 
         }
 
-        function save($categoria,$friendly,$imagen,$permisos,$visible,$meta_keywords,$meta_titulo,$meta_descripcion)
+        private function optimizeEntity($array)
         {
-            $nvoregistro = array(
-                "nombre" => $categoria,
-                "friendly" => $friendly,
-                "imagen" => $imagen,
-                "visible" => $visible,
-                "permisos" => $permisos,
-                "meta_keywords" => $meta_keywords,
-                "meta_titulo" => $meta_titulo,
-                "meta_descripcion" => $meta_descripcion,
-                "fecha" => date('Y-m-d')." ".date('H:i:s'),
-                "status" => "1",
-            );
-
-            if(!empty($this->lang))
+            foreach ($array as $k => $v )
             {
-              $nvoregistro['lang'] = $this->lang;
+                if (!isset($v)) {
+                    unset($array[$k]);
+                }
             }
-
-
-            return $this->guardarRegistro($nvoregistro);
+            return $array;
         }
 
-        function edit($id,$categoria,$friendly,$imagen,$permisos,$visible,$meta_keywords,$meta_titulo,$meta_descripcion)
-        {
-           $nvoregistro = array(
-                "nombre" => $categoria,
-                "friendly" => $friendly,
-                "visible" => $visible,
-                "permisos" => $permisos,
-                "meta_keywords" => $meta_keywords,
-                "meta_titulo" => $meta_titulo,
-                "meta_descripcion" => $meta_descripcion
-            );
-
-            if(!empty($imagen))
-            {
-              $nvoregistro['image'] = $imagen;
-            }
-            if(!empty($this->lang))
-            {
-              $nvoregistro['lang'] = $this->lang;
-            }
-
-              $this->where()->addAnd('id',$id,'=');
-
-            return $this->editarRegistro( $nvoregistro);
-        }
-        function delete($id,$status)
+        function setStatus($id,$status)
         {
             $nvoregistro = array(
                 "status" => "$status"
@@ -135,6 +79,35 @@ class categoriasBlog  extends \Franky\Database\Mysql\objectOperations
             }
 
             return $this->getColeccion($campos);
+    }
+
+    public function save(array $data)
+    {
+        $data = $this->optimizeEntity($data);
+
+
+    	if (isset($data['id']))
+    	{
+            $this->where()->addAnd('id',$data['id'],'=');
+
+            return $this->editarRegistro($data);
+    	}
+    	else {
+
+            return $this->guardarRegistro( $data);
+    	}
+
+    }
+    
+    public function eliminar(array $data)
+    {
+        $data = $this->optimizeEntity($data);
+        foreach($data as $k => $v)
+        {
+            $this->where()->addAnd($k,$v,'=');
+        }
+        
+        return $this->eliminarRegistro($data);
     }
 
 }

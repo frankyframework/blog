@@ -1,5 +1,6 @@
 <?php
 use Blog\model\Blog;
+use Blog\entity\BlogEntity;
 use Blog\schema\blogPostingSchema;
 use Franky\Schema\aggregateRatingSchema;
 use Franky\Schema\personSchema;
@@ -11,6 +12,7 @@ $MyBuscadorBlog->setAtributo("action", $MyRequest->url(BLOG));
 
 $MyUser             = new USERS();
 $MyBlog = new Blog();
+$BlogEntity = new BlogEntity();
 
 $schema = new blogPostingSchema();
 $ratingSchema =  new aggregateRatingSchema();
@@ -22,10 +24,11 @@ $amigable_categoria_context =  $MyRequest->getUrlParam("categoria");;
 $MyBlog->setNivel($MySession->GetVar('role'));
 if(getCoreConfig('blog/idioma/multi-idioma') == 1)
 {
-    $MyBlog->setLang($_SESSION['lang'] );
+    $BlogEntity->lang($_SESSION['lang'] );
 }
-
-$MyBlog->getData($amigable_context, "","","",1);
+$BlogEntity->friendly($amigable_context);
+$BlogEntity->status(1);
+$MyBlog->getData($BlogEntity->getArrayCopy());
 $total			= $MyBlog->getTotal();
 
 $blog_detalle = array();

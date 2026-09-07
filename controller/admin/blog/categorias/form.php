@@ -1,6 +1,7 @@
 <?php
 use Blog\Form\categoriasBlogForm;
 use Blog\model\categoriasBlog;
+use Blog\entity\CategoriablogEntity;
 
 $id                 = $MyRequest->getRequest('id');
 $callback           = $MyRequest->getRequest('callback');
@@ -9,7 +10,9 @@ $data             = $MyFlashMessage->getResponse();
 if(!empty($id))
 {
     $MyCategoriaBlog = new categoriasBlog();
-    $result	 = $MyCategoriaBlog->getData($id);
+    $CategoriablogEntity = new CategoriablogEntity();
+    $CategoriablogEntity->id($id);
+    $result	 = $MyCategoriaBlog->getData($CategoriablogEntity->getArrayCopy());
     $data           = $MyCategoriaBlog->getRows();
     $data['permisos'] = json_decode($data['permisos'],true);
 

@@ -1,13 +1,19 @@
 <?php
 use Blog\model\Blog;
+use Blog\entity\BlogEntity;
 use Blog\model\categoriasBlog;
+use Blog\entity\CategoriablogEntity;
 use Franky\Core\paginacion;
 use Blog\Form\buscadorForm;
+use Base\entity\users as UserEntity;
 
 $MyPaginacion = new paginacion();
 
 $MyBlog = new Blog();
+$UserEntity = new UserEntity();
+$BlogEntity = new BlogEntity();
 $MyCategoriaBlog = new categoriasBlog();
+$CategoriablogEntity = new CategoriablogEntity();
 $amigable_categoria_context =  $MyRequest->getUrlParam("categoria");;
 
 
@@ -26,16 +32,22 @@ $MyBlog->setOrdensql($MyPaginacion->getCampoOrden()." ".$MyPaginacion->getOrden(
 
 if(empty($amigable_categoria_context))
 {
-    $MyBlog->isVisibleInSearch(1);
+    $BlogEntity->visible_in_search(1);
 }
 
 
 $MyBlog->setNivel($MySession->GetVar('role'));
 if(getCoreConfig('blog/idioma/multi-idioma') == 1)
 {
-    $MyBlog->setLang($_SESSION['lang'] );
+    $BlogEntity->lang($_SESSION['lang'] );
 }
-$result	 = $MyBlog->getData( '', $busca_b,$autor_b,$destacado_b,1,$amigable_categoria_context);
+$BlogEntity->status(1);
+$MyBlog->setBusca($busca_b);
+$UserEntity->setNombre($autor_b);
+$BlogEntity->destacado($destacado_b);
+$CategoriablogEntity->friendly($amigable_categoria_context);
+
+$result	 = $MyBlog->getData($BlogEntity->getArrayCopy(),$CategoriablogEntity->getArrayCopy(),$UserEntity->getArrayCopy());
 
 
 $MyPaginacion->setTotal($MyBlog->getTotal());
@@ -95,9 +107,10 @@ if(!empty($amigable_categoria_context))
 {
     if(getCoreConfig('blog/idioma/multi-idioma') == 1)
     {
-        $MyCategoriaBlog->setLang($_SESSION['lang'] );
+        $CategoriablogEntity->lang($_SESSION['lang'] );
     }
-    if($MyCategoriaBlog->getData($amigable_categoria_context)==REGISTRO_SUCCESS)
+    $CategoriablogEntity->friendly($amigable_categoria_context);
+    if($MyCategoriaBlog->getData($CategoriablogEntity->getArrayCopy())==REGISTRO_SUCCESS)
     {
         $registro = $MyCategoriaBlog->getRows();
 

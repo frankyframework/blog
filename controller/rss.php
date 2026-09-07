@@ -1,10 +1,17 @@
 <?php
 use Blog\model\Blog;
+use Blog\entity\BlogEntity;
 use Blog\model\categoriasBlog;
+use Blog\entity\CategoriablogEntity;
+use Base\entity\users;
 
 
 $MyBlog = new Blog();
+$BlogEntity = new BlogEntity();
 $MyCategoriaBlog = new categoriasBlog();
+$MyCategoriaBlogEntity = new categoriasBlog();
+$users = new users();
+$CategoriablogEntity = new CategoriablogEntity();
 $amigable_categoria_context =  $MyRequest->getRequest("categoria");;
 
 $busca_b	= $MyRequest->getRequest('busca_b');
@@ -17,11 +24,15 @@ $MyBlog->setOrdensql("blog.fecha DESC");
 
 if(empty($amigable_categoria_context))
 {
-    $MyBlog->isVisibleInSearch(1);
+    $BlogEntity->visible_in_search(1);
 }
-
+$users->setNombre($autor_b);
+$MyBlog->setBusca($busca_b);
 $MyBlog->setNivel($MySession->GetVar('role'));
-$result	 = $MyBlog->getData( '', $busca_b,$autor_b,$destacado_b,1,$amigable_categoria_context);
+$BlogEntity->destacado($destacado_b);
+$BlogEntity->status(1);
+$CategoriablogEntity->friendly($amigable_categoria_context);
+$result	 = $MyBlog->getData($BlogEntity->getArrayCopy(),$CategoriablogEntity->getArrayCopy(),$users->getArrayCopy());
 
 if($MyBlog->getTotal() > 0)
 {
@@ -56,7 +67,8 @@ if($MyBlog->getTotal() > 0)
 
 if(!empty($amigable_categoria_context))
 {
-    $MyCategoriaBlog->getData($amigable_categoria_context);
+    $CategoriablogEntity->friendly($amigable_categoria_context);
+    $MyCategoriaBlog->getData($CategoriablogEntity->getArrayCopy());
     $registro = $MyCategoriaBlog->getRows();
 
     $permisos = json_decode($registro['permisos'],true);
@@ -86,12 +98,9 @@ echo '<?xml version="1.0" encoding="iso-8859-1"?>';
     <item>
         <title><?=$articulo['titulo']?></title>
         <link><?=$articulo['link']?></link>
-        <?php //<comments>http://www.miurl.com/comentarios.php?id='.$row[id_post].'</comments> ?>
         <pubDate><?=$articulo['fecha']?></pubDate>
         <category><?=$articulo['categoria']?></category>
-        <?php //<guid>http://www.miurl.com/comentarios.php?id='.$row[id_post].'</guid> ?>
         <description><![CDATA[<?=$articulo['contenido']['p']?>]]></description>
-      <?php /*  <content:encoded><![CDATA[<?=$articulo['articulo']?>]]></content:encoded> */ ?>
     </item>
     <?php endforeach; ?>
     <?php endif; ?>

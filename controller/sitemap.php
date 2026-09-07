@@ -1,8 +1,10 @@
 <?php
 use Blog\model\Blog;
+use Blog\entity\BlogEntity;
 use Blog\model\categoriasBlog;
 
 $MyBlog = new Blog();
+$BlogEntity = new BlogEntity();
 $MyCategoriaBlog = new categoriasBlog();
 
 $blog = [
@@ -35,8 +37,8 @@ $MyBlog->setPage(1);
 $MyBlog->setTampag(10000);
 $MyBlog->setOrdensql("blog.fecha DESC");
 $MyBlog->setNivel($MySession->GetVar('role'));
-
-$result	 = $MyBlog->getData( '', '','','',1,'');
+$BlogEntity->status(1);
+$result	 = $MyBlog->getData($BlogEntity->getArrayCopy());
 
 
 if($MyBlog->getTotal() > 0)

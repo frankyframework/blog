@@ -132,7 +132,7 @@ function RedirectListaBlog(response,id,status)
     }
     else
     {
-        window.location = '<?=$Tokenizer->decode($callback)?>';
+        window.location = document.referrer;
     }
 }
 
@@ -147,7 +147,7 @@ $(document).ready(function(){
 
         $('.descartar_borrador').click(function(e){
             e.preventDefault();
-            EliminarRegistro('descartarBorradorBlog','<?=$id?>',0,'¿Estas seguro que ya no quieres este borrador?','RedirectListaBlog');
+            EliminarRegistro('descartarBorradorBlog',$('#frmarticulosblog').find('input[name=id]').val(),0,'¿Estas seguro que ya no quieres este borrador?','RedirectListaBlog');
         });
 
 

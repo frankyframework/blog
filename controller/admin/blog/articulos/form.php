@@ -1,6 +1,7 @@
 <?php
 use Blog\Form\articulosBlogForm;
 use Blog\model\Blog;
+use Blog\entity\BlogEntity;
 use Blog\model\BorradorblogModel;
 use Blog\entity\BorradorblogEntity;
 use Franky\Haxor\Tokenizer;
@@ -8,6 +9,7 @@ use Franky\Haxor\Tokenizer;
 
 $Tokenizer = new Tokenizer();
 $MyBlog = new Blog();
+$BlogEntity = new BlogEntity();
 $BorradorblogModel = new BorradorblogModel();
 $BorradorblogEntity = new BorradorblogEntity();
 $MyBlog->setIsAdmin(1);
@@ -26,7 +28,9 @@ if(!empty($id))
 
     $title_form = "Editar articulos del BLOG";
     $MyBlog->setIsAdmin(1);
-    $result	 = $MyBlog->getData($id);
+    $BlogEntity->status(1);
+    $BlogEntity->id($id);
+    $result	 = $MyBlog->getData($BlogEntity->getArrayCopy());
 
     $data           = $MyBlog->getRows();
 
@@ -38,9 +42,10 @@ if(!empty($id))
     }else{
          $data["imagen_portada"] = "";
     }
+
+
     $data['permisos'] = json_decode($data['permisos'],true);
     $data['id'] = $Tokenizer->token('articulo_blog', $data['id']);;
-
 
 
     if(!empty($borrador))
@@ -60,7 +65,7 @@ if(!empty($id))
             $data['autortext'] = htmlentities($data['autortext']);
             $data['meta_titulo'] = htmlentities($data['meta_titulo']);
             $data['meta_descripcion'] = htmlentities($data['meta_descripcion']);
-            
+            $data['contenido'] = stripcslashes($data['contenido']);
             $data['data_img'] = htmlentities(json_encode(['imagen' => $data['imagen'],'imagen_portada' => $data['imagen_portada']]));
 
             if(!empty($data["imagen_portada"]) && file_exists($MyConfigure->getServerUploadDir()."/blog/".$data["id"]."/".$data["imagen_portada"]))
@@ -95,12 +100,10 @@ if(getCoreConfig('blog/idioma/multi-idioma') == 1)
 
 }
 
-
 $adminForm->setData($data);
 $adminForm->setAtributoInput("contenido","value", ($data['contenido']));
 $adminForm->setAtributoInput("callback","value", $callback);
 $adminForm->setAtributoInput("borrador","value", $borrador);
-
 
 
 $MyMetatag->setCode("<script  src='/public/plugins/tinymce/tinymce.min.js'></script>");
