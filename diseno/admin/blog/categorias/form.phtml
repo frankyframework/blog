@@ -1,8 +1,16 @@
 <div class="content">
     <div class="w-xxxx-12"><?php echo breadcrumbs(); ?></div>
+    <div class="w-xxxx-12 cont_global_admin">
+        <h1 class="titulo_seccion_admin"><?= _($title_form) ?></h1>
+        <div class="w-xxxx-12 cont_header_panel">
+            <div class="_wrapp_form_serch">
+                <div class="form-group"><a class="_btn _secondary" href="<?= ($MyRequest->getRequest('callback') ? $Tokenizer->decode($MyRequest->getRequest('callback')) : $MyRequest->url(ADMIN_LISTA_CATEGORIAS_BLOG))?>" ><?= _('Atras') ?></a></div>
+                <div class="form-group"><a class="_btn _primary save-form-top" href="#"><?= _('Guardar') ?></a></div>
+            </div>
+        </div>
+    </div>
     <div class="w-xxxx-12">
-         <div class="w-xxxx-4 m-l-xxxx-1">
-             <h1><?php echo $title_form; ?></h1>
+         <div class="content_form">
             <?php echo $adminForm->openTag(); ?>
             <?php echo $adminForm->getRow('id'); ?>
             <?php echo $adminForm->getRow('callback'); ?>
@@ -23,6 +31,11 @@
 
 <script >
 $(document).ready(function(){
-         $("#frmcategoriablog").validate();
+    $("#frmcategoria").validate();
+
+    $('.save-form-top').click(function(e){
+        e.preventDefault();
+        $('#frmcategoria').trigger('submit');
+    });
 });
 </script>
