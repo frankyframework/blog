@@ -42,7 +42,7 @@ class Blog  extends \Franky\Database\Mysql\objectOperations
             $campos = array("blog.id","blog.categoria","titulo","contenido","destacado","blog.friendly","comentarios","blog.fecha","fecha_modificado","blog.lang",
                 "blog.status","autor","keywords","blog.meta_titulo","blog.meta_descripcion","visible_in_search","blog.permisos","blog.imagen","blog.imagen_portada",
                 "categorias_blog.nombre as categoria_nombre","categorias_blog.friendly as amigable_categoria","categorias_blog.visible","categorias_blog.permisos as acl_categoria"
-                ,"users.nombre as nombre_user","users.id as id_user","autortext");
+                ,"users.nombre as nombre_user","users.id as id_user","autortext","showimage");
 
 
 
@@ -62,7 +62,7 @@ class Blog  extends \Franky\Database\Mysql\objectOperations
                       }
                       else
                       {
-                          if(in_array($k,['id','fecha','friendly'])) {
+                          if(in_array($k,['id','fecha','friendly','lang','visible_in_search'])) {
                               $this->where()->addAnd("blog.".$k,$v,'=');
                           } else {
                               $this->where()->addAnd("blog.".$k,"%".$v."%",'like');
@@ -221,67 +221,7 @@ class Blog  extends \Franky\Database\Mysql\objectOperations
           }
 
         }
-/*
-        function save($categoria,$titulo,$friendly,$autortext,$contenido,$comentarios,$autor,$keywords,$destacado,$imagen,$imagen_portada,$visible_in_search,$permisos,$meta_titulo="", $meta_descripcion="")
-        {
-            $nvoregistro = array(
-                "categoria" => $categoria,
-                "titulo" => $titulo,
-                "contenido" => $contenido,
-                "friendly" => $friendly,
-                "comentarios" => $comentarios,
-                "fecha" => date('Y-m-d')." ".date('H:i:s'),
-                "autor" => $autor,
-                "keywords" => $keywords,
-                "status" => "1",
-                "destacado" => $destacado,
-                "autortext" => $autortext,
-                "imagen" => $imagen,
-                "imagen_portada" => $imagen_portada,
-                "visible_in_search" => $visible_in_search,
-                "permisos" => $permisos,
-                "meta_titulo" => $meta_titulo,
-                "meta_descripcion" => $meta_descripcion
-            );
 
-            if(!empty($this->lang))
-            {
-              $nvoregistro['lang'] = $this->lang;
-            }
-
-            return $this->guardarRegistro( $nvoregistro);
-        }
-*/
-        function edit($id,$categoria,$titulo,$friendly,$autortext,$contenido,$comentarios,$keywords,$destacado,$imagen,$imagen_portada,$visible_in_search,$permisos,$meta_titulo="", $meta_descripcion="")
-        {
-           $nvoregistro = array(
-                "categoria" => $categoria,
-                "titulo" => $titulo,
-               "autortext" => $autortext,
-                "contenido" => $contenido,
-                "friendly" => $friendly,
-                "comentarios" => $comentarios,
-                "keywords" => $keywords,
-                "destacado" => $destacado,
-                "visible_in_search" => $visible_in_search,
-                "permisos" => $permisos,
-                "meta_titulo" => $meta_titulo,
-                "meta_descripcion" => $meta_descripcion
-            );
-            if(!empty($this->lang))
-            {
-              $nvoregistro['lang'] = $this->lang;
-            }
-
-            if(!empty($imagen))
-            {
-              $nvoregistro['imagen'] = $imagen;
-              $nvoregistro['imagen_portada'] = $imagen_portada;
-            }
-              $this->where()->addAnd('id',$id,'=');
-
-            return $this->editarRegistro($nvoregistro);
-        }
         function delete($id,$status)
         {
             $nvoregistro = array(

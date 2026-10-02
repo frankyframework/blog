@@ -15,6 +15,7 @@ class BlogEntity
     private $lang;
     private $status;
     private $autor;
+    private $autortext;
     private $keywords;
     private $meta_titulo;
     private $meta_descripcion;
@@ -22,6 +23,7 @@ class BlogEntity
     private $permisos;
     private $imagen;
     private $imagen_portada;
+    private $showimage;
    
  
     public function __construct($data = null)
@@ -53,7 +55,8 @@ class BlogEntity
         $this->permisos = (isset($data["permisos"]) ? $data["permisos"] : null);
         $this->imagen = (isset($data["imagen"]) ? $data["imagen"] : null);
         $this->imagen_portada = (isset($data["imagen_portada"]) ? $data["imagen_portada"] : null);
-
+        $this->showimage = (isset($data["showimage"]) ? $data["showimage"] : null);
+        $this->autortext = (isset($data["autortext"]) ? $data["autortext"] : null);
     }
     
     public function getArrayCopy()
@@ -103,7 +106,11 @@ class BlogEntity
 
     public function imagen($imagen = null){ if($imagen != null){ $this->imagen=$imagen; }else{ return $this->imagen; } }
 
-    public function imagen_portada($imagen_portada = null){ if($imagen_portada != null){ $this->imagen_portada=$imagen_portada; }else{ return $this->imagen_portada; } }
+    public function imagen_portada($imagen_portada = null){ if($imagen_portada !== null){ $this->imagen_portada=$imagen_portada; }else{ return $this->imagen_portada; } }
+
+    public function showimage($showimage = null){ if($showimage != null){ $this->showimage=$showimage; }else{ return $this->showimage; } }
+
+    public function autortext($autortext = null){ if($autortext != null){ $this->autortext=$autortext; }else{ return $this->autortext; } }
 
 }
 ?>

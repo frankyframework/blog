@@ -62,6 +62,7 @@ if($total > 0)
         "id_user"           => $registro["id_user"],
         "contenido"         => contentWebP($registro["contenido"]),
         "destacado"         => $registro["destacado"],
+        "showimage"         => $registro["showimage"],
         "permitircomentarios"       => $registro["comentarios"],
         "fecha"             => getFechaUI($registro["fecha"]),
         "fecha_original"             => $registro["fecha"],

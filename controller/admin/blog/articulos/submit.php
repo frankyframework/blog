@@ -13,7 +13,7 @@ $Tokenizer = new Tokenizer();
 $MyBlog = new Blog();
 $BlogEntity = new BlogEntity($MyRequest->getRequest());
 $BorradorblogModel = new BorradorblogModel();
-$BorradorblogEntity = new BorradorblogEntity($MyRequest->getRequest('id'));
+$BorradorblogEntity = new BorradorblogEntity($MyRequest->getRequest());
 
 $id                 = $Tokenizer->decode($MyRequest->getRequest('id'));
 $callback           = $Tokenizer->decode($MyRequest->getRequest('callback'));
@@ -25,8 +25,11 @@ $comentarios        = $MyRequest->getRequest('comentarios',0);
 $keywords           = $MyRequest->getRequest('keywords');
 $permisos           = $MyRequest->getRequest('permisos',[]);
 $destacado          = $MyRequest->getRequest('destacado',0);
+$showimage          = $MyRequest->getRequest('showimage',0);
+
 $BlogEntity->contenido($contenido);
 $BlogEntity->destacado($destacado);
+$BlogEntity->showimage($showimage);
 $BlogEntity->comentarios($comentarios);
 $BlogEntity->id($id);
 $lang   = $MyRequest->getRequest('lang');

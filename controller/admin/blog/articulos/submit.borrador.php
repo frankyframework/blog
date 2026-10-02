@@ -21,6 +21,7 @@ $contenido          = $MyRequest->getRequest('contenido',"",true);
 $comentarios        = $MyRequest->getRequest('comentarios',0);
 $keywords           = $MyRequest->getRequest('keywords');
 $destacado          = $MyRequest->getRequest('destacado',0);
+$showimage          = $MyRequest->getRequest('showimage',0);
 $meta_titulo        = $MyRequest->getRequest('meta_titulo');
 $meta_descripcion   = $MyRequest->getRequest('meta_descripcion');
 $visible_in_search    = $MyRequest->getRequest('visible_in_search',0);

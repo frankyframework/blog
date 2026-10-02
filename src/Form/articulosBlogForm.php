@@ -42,7 +42,19 @@ class articulosBlogForm extends \Franky\Form\Form
 
              )
          );
+        $this->add(array(
+                'name' => 'showimage',
 
+                'type'  => 'checkbox',
+                'atributos' => array(
+                    'class'       => 'switch',
+                    'maxlength' => 255
+                 ),
+                'options' =>  array("1" => _blog("Mostrar imagen en top de articulo")),
+
+
+            )
+        );
 
         $this->add(array(
                 'name' => 'titulo',

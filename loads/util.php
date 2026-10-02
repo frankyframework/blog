@@ -98,9 +98,12 @@ function getMenuCategoriasBlog()
 function getMenuArticulosBlog($cat = "")
 {
     global $MyRequest;
+    global $MySession;
 
     $MyBlog = new Blog\model\Blog();
     $BlogEntity = new Blog\entity\BlogEntity();
+    $MyBlog->setNivel($MySession->GetVar('role'));
+
     $MyBlog->setOrdensql("titulo ASC");
     $MyBlog->setTampag(10);
     if(getCoreConfig('blog/idioma/multi-idioma') == 1)
