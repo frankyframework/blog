@@ -3,7 +3,9 @@
 <!--  <li><span><?php // echo $articulo["fecha"]; ?></span></li> -->
 <!-- <li>Autor: <?php // echo $articulo["autor"]; ?></li> -->
     <?php if(isset($articulo["contenido"]["img"])): ?>
-        <a href="<?php echo $articulo["link"]; ?>"><?php echo makeHTMLImg($articulo["contenido"]["img"],"","", $articulo["titulo"],'class="image_100"',1); ?></a>
+        <a href="<?php echo $articulo["link"]; ?>">
+            <?php echo makeHTMLImg($articulo["contenido"]["img"],"","", $articulo["titulo"],'class="image_100 "'.($articulo['index'] < 2 ? "fetchpriority='high'" : ""),($articulo['index'] < 2 ? 0 : 1)); ?>
+    </a>
     <?php endif;  ?>
     <h2><a href="<?php echo $articulo["link"]; ?>"><?php echo $articulo["titulo"]; ?></a></h2>
     <?php if(isset($articulo["contenido"]["p"])): ?>

@@ -64,6 +64,7 @@ if($MyBlog->getTotal() > 0)
 
 
                 $lista_articulos_blog[$iRow] = array(
+                    "index"		=> $iRow,
                     "id"		=> $registro["id"],
                     "titulo"		=> $registro["titulo"],
                     "categoria"		=> $registro["categoria_nombre"],

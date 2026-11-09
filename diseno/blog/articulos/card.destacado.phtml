@@ -1,7 +1,9 @@
 <div class="w-xxxx-12 _card_res_destacado">
     <div class="content">
         <?php if(isset($articulo["contenido"]["img"])): ?>
-                <a href="<?php echo $articulo["link"]; ?>"><?php echo makeHTMLImg($articulo["contenido"]["img"],"","", $articulo["titulo"],'class="image_100"',1); ?></a>
+                <a href="<?php echo $articulo["link"]; ?>">
+                    <?php echo makeHTMLImg($articulo["contenido"]["img"],"","", $articulo["titulo"],'class="image_100" '. ($articulo['index'] < 2 ? "fetchpriority='high'" : ""),($articulo['index'] < 2 ? 0 : 1)); ?>
+                </a>
         <?php endif;  ?>
 
         <div class="_blog_txt_principal_article">
