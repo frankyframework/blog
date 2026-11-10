@@ -24,7 +24,70 @@ $(window).load(function(){
     content_css: [],
    relative_urls: true,
   remove_script_host: false,
-  file_browser_callback: BrowseFiles
+  file_browser_callback: BrowseFiles,
+  extended_valid_elements: 'img[class|src|border|alt|title|width|height|align|onmouseover|onmouseout|name|fetchpriority|loading]',
+image_advtab: true, 
+image_class_list: [
+  { title: 'Normal (Por defecto)', value: '' },
+  { title: 'Prioridad Alta (LCP High)', value: 'fps-high' },
+  { title: 'Prioridad Baja (Low)', value: 'fps-low' },
+  { title: 'Carga Diferida (Lazy Loading)', value: 'fps-lazy' },
+  { title: 'Alta Prioridad + No Lazy (Ideal para Banner Principal)', value: 'fps-eager-high' }
+],
+setup: function (editor) {
+  // Al guardar o extraer el HTML: Convierte las clases en atributos nativos
+  editor.on('GetContent', function (e) {
+    var div = document.createElement('div');
+    div.innerHTML = e.content;
+    var imgs = div.querySelectorAll('img');
+    
+    imgs.forEach(function (img) {
+      // Limpiar atributos previos para evitar duplicados
+      img.removeAttribute('fetchpriority');
+      img.removeAttribute('loading');
+
+      if (img.classList.contains('fps-high')) {
+        img.setAttribute('fetchpriority', 'high');
+        img.classList.remove('fps-high');
+      } else if (img.classList.contains('fps-low')) {
+        img.setAttribute('fetchpriority', 'low');
+        img.classList.remove('fps-low');
+      } else if (img.classList.contains('fps-lazy')) {
+        img.setAttribute('loading', 'lazy');
+        img.classList.remove('fps-lazy');
+      } else if (img.classList.contains('fps-eager-high')) {
+        img.setAttribute('fetchpriority', 'high');
+        img.setAttribute('loading', 'eager');
+        img.classList.remove('fps-eager-high');
+      }
+    });
+    e.content = div.innerHTML;
+  });
+
+  // Al cargar el HTML en el editor: Reconstruye las clases para que salgan seleccionadas
+  editor.on('BeforeSetContent', function (e) {
+    if (!e.content) return;
+    var div = document.createElement('div');
+    div.innerHTML = e.content;
+    var imgs = div.querySelectorAll('img');
+    
+    imgs.forEach(function (img) {
+      var priority = img.getAttribute('fetchpriority');
+      var loading = img.getAttribute('loading');
+
+      if (priority === 'high' && loading === 'eager') {
+        img.classList.add('fps-eager-high');
+      } else if (priority === 'high') {
+        img.classList.add('fps-high');
+      } else if (priority === 'low') {
+        img.classList.add('fps-low');
+      } else if (loading === 'lazy') {
+        img.classList.add('fps-lazy');
+      }
+    });
+    e.content = div.innerHTML;
+  });
+}
   });
 });
 </script>
